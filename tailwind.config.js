@@ -17,6 +17,9 @@ module.exports = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ["Inter", "sans-serif"], // Change 'sans' or add a new key as needed
+      },
       keyframes: {
         "accordion-down": {
           from: { height: 0 },
