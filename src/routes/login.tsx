@@ -13,7 +13,7 @@ import axios, { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import Cookies from "js-cookie";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import useUser from "@/hooks/useUser";
 
@@ -68,7 +68,10 @@ export default function Login() {
       <Form {...form}>
         <h1 className="text-2xl font-bold mb-3 tracking-tight">Login</h1>
 
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-8 max-w-xs"
+        >
           <FormField
             control={form.control}
             name="email"
@@ -77,7 +80,6 @@ export default function Login() {
                 <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input
-                    className="max-w-xs"
                     placeholder="example@example.com"
                     {...field}
                     type="email"
@@ -88,7 +90,6 @@ export default function Login() {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="password"
@@ -98,7 +99,6 @@ export default function Login() {
                 <FormControl>
                   <Input
                     autoComplete="current-password"
-                    className="max-w-xs"
                     placeholder="Must be at least 6 characters"
                     {...field}
                     type="password"
@@ -109,10 +109,17 @@ export default function Login() {
             )}
           />
 
-          <Button type="submit" className="w-full max-w-xs">
+          <Button type="submit" className="w-full">
             Login
           </Button>
         </form>
+
+        <div className="text-sm text-gray-600 mt-4">
+          <span>Don't have an account? </span>
+          <Link to="/sign-up" className="text-blue-500">
+            Create one
+          </Link>
+        </div>
       </Form>
     </div>
   );

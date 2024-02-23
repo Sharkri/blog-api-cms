@@ -13,7 +13,7 @@ import axios, { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import Cookies from "js-cookie";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import UserContext from "@/context/UserContext";
 
@@ -71,7 +71,6 @@ export default function SignUp() {
     <div className="p-8">
       <Form {...form}>
         <h1 className="text-2xl font-bold mb-3 tracking-tight">Sign Up</h1>
-
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
             control={form.control}
@@ -135,6 +134,12 @@ export default function SignUp() {
             Sign Up
           </Button>
         </form>
+        <div className="text-sm text-gray-600 mt-4">
+          <span>Already have an account? </span>
+          <Link to="/login" className="text-blue-500">
+            Login
+          </Link>
+        </div>
       </Form>
     </div>
   );
