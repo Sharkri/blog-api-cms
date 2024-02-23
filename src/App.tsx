@@ -1,4 +1,4 @@
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { Outlet, RouterProvider, createBrowserRouter } from "react-router-dom";
 import SignUp from "./routes/sign-up";
 import Dashboard from "./routes/dashboard";
 import Header from "./components/section/Header";
@@ -8,9 +8,19 @@ import useUser from "./hooks/useUser";
 import Login from "./routes/login";
 
 const router = createBrowserRouter([
-  { path: "/", element: <Dashboard /> },
-  { path: "/sign-up", element: <SignUp /> },
-  { path: "/login", element: <Login /> },
+  {
+    element: (
+      <>
+        <Header />
+        <Outlet />
+      </>
+    ),
+    children: [
+      { path: "/", element: <Dashboard /> },
+      { path: "/sign-up", element: <SignUp /> },
+      { path: "/login", element: <Login /> },
+    ],
+  },
 ]);
 
 function App() {
@@ -19,7 +29,6 @@ function App() {
   return (
     <div>
       <UserContext.Provider value={{ user, loading }}>
-        <Header />
         <RouterProvider router={router} />
       </UserContext.Provider>
 
