@@ -1,7 +1,7 @@
 import { Outlet, RouterProvider, createBrowserRouter } from "react-router-dom";
 import SignUp from "./routes/sign-up";
 import Dashboard from "./routes/dashboard";
-import Header from "./components/section/Header";
+import Header from "./components/section/header";
 import { Toaster } from "@/components/ui/sonner";
 import UserContext from "./context/UserContext";
 import useUser from "./hooks/useUser";

@@ -11,13 +11,17 @@ export default function useUser() {
   useEffect(() => {
     const getUserByToken = async () => {
       setLoading(true);
-
       if (token) {
         const { VITE_API_URL } = import.meta.env;
-        const res = await axios.get(`${VITE_API_URL}/api/users`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setUser(res.data);
+
+        try {
+          const res = await axios.get(`${VITE_API_URL}/api/users`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setUser(res.data);
+        } catch (error) {
+          console.error(error);
+        }
       }
 
       setLoading(false);

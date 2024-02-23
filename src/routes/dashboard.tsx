@@ -1,6 +1,7 @@
 import UserContext from "@/context/UserContext";
 import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import BlogPosts from "../components/blog/blog-posts";
 
 export default function Dashboard() {
   const { user, loading } = useContext(UserContext);
@@ -13,8 +14,15 @@ export default function Dashboard() {
   if (!user) return null;
 
   return (
-    <div>
-      {user.role === "user" ? "You are not an admin...." : "Hiya heya haya"}
+    <div className="p-8">
+      {user.role === "user" ? (
+        <p className="text-gray-600 text-center">
+          Hmm, it seems you aren't authorized to create posts. If you think this
+          is a mistake - it probably isn't.
+        </p>
+      ) : (
+        <BlogPosts />
+      )}
     </div>
   );
 }
