@@ -14,34 +14,30 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
-import { useContext, useEffect } from "react";
-import UserContext from "@/context/UserContext";
+import { useEffect } from "react";
+import useUser from "@/hooks/useUser";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  displayName: z.string().nonempty("Display name is required"),
 });
 
 type ErrorResponse = {
   msg: string;
-  path: "email" | "password" | "displayName";
+  path: "email" | "password";
 };
 
-export default function SignUp() {
+export default function Login() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: { email: "", password: "", displayName: "" },
+    defaultValues: { email: "", password: "" },
   });
   const navigate = useNavigate();
+  const { VITE_API_URL } = import.meta.env;
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const { VITE_API_URL } = import.meta.env;
     try {
-      const res = await axios.post(
-        `${VITE_API_URL}/api/users/register`,
-        values
-      );
+      const res = await axios.post(`${VITE_API_URL}/api/users/login`, values);
       const token = res.data;
       Cookies.set("token", token, {
         expires: 7,
@@ -62,7 +58,7 @@ export default function SignUp() {
     }
   }
 
-  const { user } = useContext(UserContext);
+  const { user } = useUser();
   useEffect(() => {
     if (user) navigate("/");
   }, [user, navigate]);
@@ -70,7 +66,7 @@ export default function SignUp() {
   return (
     <div className="p-8">
       <Form {...form}>
-        <h1 className="text-2xl font-bold mb-3 tracking-tight">Sign Up</h1>
+        <h1 className="text-2xl font-bold mb-3 tracking-tight">Login</h1>
 
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
@@ -85,6 +81,7 @@ export default function SignUp() {
                     placeholder="example@example.com"
                     {...field}
                     type="email"
+                    autoComplete="email"
                   />
                 </FormControl>
                 <FormMessage />
@@ -100,7 +97,7 @@ export default function SignUp() {
                 <FormLabel>Password</FormLabel>
                 <FormControl>
                   <Input
-                    autoComplete="new-password"
+                    autoComplete="current-password"
                     className="max-w-xs"
                     placeholder="Must be at least 6 characters"
                     {...field}
@@ -112,27 +109,8 @@ export default function SignUp() {
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="displayName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Display Name</FormLabel>
-                <FormControl>
-                  <Input
-                    className="max-w-xs"
-                    placeholder="Enter display name"
-                    {...field}
-                    type="username"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
           <Button type="submit" className="w-full max-w-xs">
-            Sign Up
+            Login
           </Button>
         </form>
       </Form>

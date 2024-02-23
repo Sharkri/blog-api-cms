@@ -5,10 +5,12 @@ import Header from "./components/section/Header";
 import { Toaster } from "@/components/ui/sonner";
 import UserContext from "./context/UserContext";
 import useUser from "./hooks/useUser";
+import Login from "./routes/login";
 
 const router = createBrowserRouter([
   { path: "/", element: <Dashboard /> },
   { path: "/sign-up", element: <SignUp /> },
+  { path: "/login", element: <Login /> },
 ]);
 
 function App() {
