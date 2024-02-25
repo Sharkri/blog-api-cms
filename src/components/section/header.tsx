@@ -2,6 +2,7 @@ import UserContext from "@/context/UserContext";
 import { useContext } from "react";
 import { Button } from "../ui/button";
 import Cookies from "js-cookie";
+import { Link } from "react-router-dom";
 
 export default function Header() {
   const { user, loading } = useContext(UserContext);
@@ -12,7 +13,9 @@ export default function Header() {
 
   return (
     <header className="px-4 py-2 flex flex-wrap justify-between">
-      <h1 className="font-bold">Blog API CMS</h1>
+      <h1 className="font-bold">
+        <Link to="/">Blog API CMS</Link>
+      </h1>
 
       <div className="flex gap-4">
         {!loading && user && (
