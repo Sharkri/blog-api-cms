@@ -14,6 +14,7 @@ import { z } from "zod";
 import { Checkbox } from "../ui/checkbox";
 import { useState } from "react";
 import getImageUrl from "@/lib/blog/get-image-url";
+import Editor from "./blog-editor";
 
 const MAX_FILE_SIZE = 5_000_000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -78,18 +79,15 @@ export default function BlogPostForm({
       <Form {...form}>
         <h1 className="text-2xl font-bold mb-4">{formAction}</h1>
 
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-6 max-w-xs"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
             control={form.control}
             name="title"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="max-w-xs">
                 <FormLabel>Title</FormLabel>
                 <FormControl>
-                  <Input {...field} type="text" />
+                  <Input {...field} type="text" placeholder="Your blog title" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -99,37 +97,32 @@ export default function BlogPostForm({
             control={form.control}
             name="description"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="max-w-xs">
                 <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <Input {...field} type="text" />
+                  <Input
+                    {...field}
+                    type="text"
+                    placeholder="Describe your blog"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-
-          <FormField
-            control={form.control}
-            name="blogContents"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Blog Contents</FormLabel>
-                <FormControl>
-                  <Input {...field} type="text" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
           <FormField
             control={form.control}
             name="image"
             render={() => (
-              <FormItem className="grid w-full max-w-sm items-center gap-1.5">
+              <FormItem className="grid w-full max-w-xs items-center gap-1.5">
                 <FormLabel>Thumbnail</FormLabel>
-                {previewImage && <img src={previewImage} alt="" />}
+                {previewImage && (
+                  <img
+                    src={previewImage}
+                    alt=""
+                    className="max-w-[240px] max-h-[240px] object-fit"
+                  />
+                )}
                 <FormControl>
                   <Input
                     type="file"
@@ -155,9 +148,23 @@ export default function BlogPostForm({
 
           <FormField
             control={form.control}
+            name="blogContents"
+            render={({ field }) => (
+              <FormItem className="max-w-4xl">
+                <FormLabel>Blog Content</FormLabel>
+                <FormControl>
+                  <Editor {...field} placeholder="Write your blog..." />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
             name="isPublished"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-center space-x-2 space-y-0 rounded-md">
+              <FormItem className="max-w-xs flex items-center space-x-2 space-y-0">
                 <FormControl>
                   <Checkbox
                     checked={field.value}
@@ -169,7 +176,7 @@ export default function BlogPostForm({
             )}
           />
 
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="max-w-xs w-full">
             {formAction}
           </Button>
         </form>
