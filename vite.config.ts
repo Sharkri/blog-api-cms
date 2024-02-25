@@ -4,6 +4,7 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [react()],
+  base: "https://sharkri.github.io/blog-api-cms",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
