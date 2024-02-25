@@ -18,7 +18,7 @@ export default function Dashboard() {
       {user.role === "user" ? (
         <p className="text-gray-600 text-center">
           Hmm, it seems you aren't authorized to create posts. If you think this
-          is a mistake - it probably isn't.
+          is a mistake - it probably isn't lol.
         </p>
       ) : (
         <BlogPosts />

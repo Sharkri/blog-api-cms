@@ -14,8 +14,9 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import Cookies from "js-cookie";
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useUser from "@/hooks/useUser";
+import Spinner from "@/components/ui/spinner";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email"),
@@ -27,15 +28,18 @@ type ErrorResponse = {
   path: "email" | "password";
 };
 
+const { VITE_API_URL } = import.meta.env;
+
 export default function Login() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: { email: "", password: "" },
   });
   const navigate = useNavigate();
-  const { VITE_API_URL } = import.meta.env;
+  const [loading, setLoading] = useState(false);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
     try {
       const res = await axios.post(`${VITE_API_URL}/api/users/login`, values);
       const token = res.data;
@@ -55,6 +59,8 @@ export default function Login() {
             form.setError(err.path, { message: err.msg });
           });
       }
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -109,8 +115,8 @@ export default function Login() {
             )}
           />
 
-          <Button type="submit" className="w-full">
-            Login
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading && <Spinner />} Login
           </Button>
         </form>
 

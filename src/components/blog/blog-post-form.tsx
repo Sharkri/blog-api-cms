@@ -15,6 +15,7 @@ import { Checkbox } from "../ui/checkbox";
 import { useState } from "react";
 import getImageUrl from "@/lib/blog/get-image-url";
 import Editor from "./blog-editor";
+import Spinner from "../ui/spinner";
 
 const MAX_FILE_SIZE = 5_000_000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -41,20 +42,19 @@ export default function BlogPostForm({
 }: {
   formAction: string;
   post?: PostData;
-  onFormSubmit: (formData: FormData) => void;
+  onFormSubmit: (formData: FormData) => Promise<void>;
 }) {
   const form = useForm<PostData>({
     resolver: zodResolver(formSchema),
     defaultValues: { title: "", blogContents: "", description: "", ...post },
   });
-
+  const [loading, setLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | undefined>(
     post?.image ? getImageUrl(post.image) : undefined
   );
   const [file, setFile] = useState<File | undefined>();
 
   const onSubmit = async (newPost: PostData) => {
-    console.log("yello?");
     if (file) {
       let message = "";
       if (file.size > MAX_FILE_SIZE) message = "Max image size is 5MB.";
@@ -63,15 +63,17 @@ export default function BlogPostForm({
       if (message) return form.setError("image", { message });
     }
 
+    setLoading(true);
+
     const formData = new FormData();
     formData.append("title", newPost.title);
     formData.append("description", newPost.description);
     formData.append("blogContents", newPost.blogContents);
     formData.append("isPublished", (newPost.isPublished || false).toString());
     if (file) formData.append("image", file);
-    console.log("yello 2?");
-    onFormSubmit(formData);
-    console.log("yello 3?");
+    await onFormSubmit(formData);
+
+    setLoading(false);
   };
 
   return (
@@ -176,7 +178,8 @@ export default function BlogPostForm({
             )}
           />
 
-          <Button type="submit" className="max-w-xs w-full">
+          <Button type="submit" className="max-w-xs w-full" disabled={loading}>
+            {loading && <Spinner />}
             {formAction}
           </Button>
         </form>

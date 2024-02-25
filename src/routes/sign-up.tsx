@@ -14,8 +14,9 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import Cookies from "js-cookie";
 import { Link, useNavigate } from "react-router-dom";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import UserContext from "@/context/UserContext";
+import Spinner from "@/components/ui/spinner";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email"),
@@ -27,6 +28,7 @@ type ErrorResponse = {
   msg: string;
   path: "email" | "password" | "displayName";
 };
+const { VITE_API_URL } = import.meta.env;
 
 export default function SignUp() {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -34,9 +36,10 @@ export default function SignUp() {
     defaultValues: { email: "", password: "", displayName: "" },
   });
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const { VITE_API_URL } = import.meta.env;
+    setLoading(true);
     try {
       const res = await axios.post(
         `${VITE_API_URL}/api/users/register`,
@@ -59,6 +62,8 @@ export default function SignUp() {
             form.setError(err.path, { message: err.msg });
           });
       }
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -130,8 +135,8 @@ export default function SignUp() {
             )}
           />
 
-          <Button type="submit" className="w-full max-w-xs">
-            Sign Up
+          <Button type="submit" className="w-full max-w-xs" disabled={loading}>
+            {loading && <Spinner />} Sign Up
           </Button>
         </form>
         <div className="text-sm text-gray-600 mt-4">

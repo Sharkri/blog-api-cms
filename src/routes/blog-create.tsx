@@ -18,7 +18,6 @@ export default function BlogCreate() {
   if (!user) return null;
 
   const handleFormSubmit = async (formData: FormData) => {
-    console.log("yello?");
     try {
       await axios.post(`${VITE_API_URL}/api/posts`, formData, {
         headers: {

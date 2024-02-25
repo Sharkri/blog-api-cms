@@ -12,6 +12,7 @@ import { Button } from "../ui/button";
 import { TrashIcon } from "@heroicons/react/24/solid";
 import { Post } from "@/types/Post";
 import { useState } from "react";
+import Spinner from "../ui/spinner";
 
 export default function BlogDeleteButton({
   post,
@@ -21,6 +22,7 @@ export default function BlogDeleteButton({
   onDeletePost: () => Promise<void>;
 }) {
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   return (
     <Dialog onOpenChange={setOpen} open={open}>
@@ -46,11 +48,14 @@ export default function BlogDeleteButton({
           </DialogClose>
           <Button
             onClick={async () => {
+              setLoading(true);
               await onDeletePost();
               setOpen(false);
+              setLoading(false);
             }}
+            disabled={loading}
           >
-            Delete Post
+            {loading && <Spinner />} Delete Post
           </Button>
         </DialogFooter>
       </DialogContent>
