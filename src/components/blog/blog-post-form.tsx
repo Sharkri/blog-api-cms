@@ -1,4 +1,3 @@
-import { Post } from "@/types/Post";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -12,15 +11,9 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import axios from "axios";
-import Cookies from "js-cookie";
-import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
 import { Checkbox } from "../ui/checkbox";
 import { useState } from "react";
 import getImageUrl from "@/lib/blog/get-image-url";
-
-const { VITE_API_URL } = import.meta.env;
 
 const MAX_FILE_SIZE = 5_000_000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -31,27 +24,36 @@ const ACCEPTED_IMAGE_TYPES = [
 ];
 
 const formSchema = z.object({
-  title: z.string().min(1),
-  topics: z.array(z.string()),
-  isPublished: z.boolean(),
-  blogContents: z.string().min(1),
-  description: z.string().min(1),
+  title: z.string().min(1, "Title cannot be empty"),
+  topics: z.array(z.string()).optional(),
+  isPublished: z.boolean().optional(),
+  blogContents: z.string().min(1, "Blog contents cannot be empty"),
+  description: z.string().min(1, "Description cannot be empty"),
   image: z.any(),
 });
+type PostData = z.infer<typeof formSchema>;
 
-export default function BlogEditForm({ post }: { post: Post }) {
-  const form = useForm<z.infer<typeof formSchema>>({
+export default function BlogPostForm({
+  formAction,
+  post,
+  onFormSubmit,
+}: {
+  formAction: string;
+  post?: PostData;
+  onFormSubmit: (formData: FormData) => void;
+}) {
+  const form = useForm<PostData>({
     resolver: zodResolver(formSchema),
-    defaultValues: { ...post, image: undefined },
+    defaultValues: { title: "", blogContents: "", description: "", ...post },
   });
-  const navigate = useNavigate();
 
   const [previewImage, setPreviewImage] = useState<string | undefined>(
-    post.image ? getImageUrl(post.image) : undefined
+    post?.image ? getImageUrl(post.image) : undefined
   );
   const [file, setFile] = useState<File | undefined>();
 
-  const onSubmit = async (newPost: z.infer<typeof formSchema>) => {
+  const onSubmit = async (newPost: PostData) => {
+    console.log("yello?");
     if (file) {
       let message = "";
       if (file.size > MAX_FILE_SIZE) message = "Max image size is 5MB.";
@@ -60,31 +62,21 @@ export default function BlogEditForm({ post }: { post: Post }) {
       if (message) return form.setError("image", { message });
     }
 
-    try {
-      const formData = new FormData();
-      formData.append("title", newPost.title);
-      formData.append("description", newPost.description);
-      formData.append("blogContents", newPost.blogContents);
-      formData.append("isPublished", newPost.isPublished.toString());
-      if (file) formData.append("image", file);
-
-      await axios.put(`${VITE_API_URL}/api/posts/${post._id}`, formData, {
-        headers: {
-          Authorization: `Bearer ${Cookies.get("token")}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      toast.success("Successfully edited blog post!");
-      navigate("/");
-    } catch (error) {
-      console.error(error);
-    }
+    const formData = new FormData();
+    formData.append("title", newPost.title);
+    formData.append("description", newPost.description);
+    formData.append("blogContents", newPost.blogContents);
+    formData.append("isPublished", (newPost.isPublished || false).toString());
+    if (file) formData.append("image", file);
+    console.log("yello 2?");
+    onFormSubmit(formData);
+    console.log("yello 3?");
   };
 
   return (
     <div className="p-8">
       <Form {...form}>
-        <h1 className="text-2xl font-bold mb-4">Edit Blog Post</h1>
+        <h1 className="text-2xl font-bold mb-4">{formAction}</h1>
 
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -110,11 +102,21 @@ export default function BlogEditForm({ post }: { post: Post }) {
               <FormItem>
                 <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <Input
-                    {...field}
-                    placeholder="Must be at least 6 characters"
-                    type="text"
-                  />
+                  <Input {...field} type="text" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="blogContents"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Blog Contents</FormLabel>
+                <FormControl>
+                  <Input {...field} type="text" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -168,7 +170,7 @@ export default function BlogEditForm({ post }: { post: Post }) {
           />
 
           <Button type="submit" className="w-full">
-            Edit Blog Post
+            {formAction}
           </Button>
         </form>
       </Form>

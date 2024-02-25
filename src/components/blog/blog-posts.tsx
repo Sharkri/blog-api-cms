@@ -5,6 +5,9 @@ import Cookies from "js-cookie";
 import { Post } from "@/types/Post";
 import BlogPostCard from "./blog-post-card";
 import { toast } from "sonner";
+import { Button } from "../ui/button";
+import { PlusIcon } from "@heroicons/react/24/solid";
+import { Link } from "react-router-dom";
 
 const { VITE_API_URL } = import.meta.env;
 
@@ -45,14 +48,23 @@ export default function BlogPosts() {
     );
 
   return (
-    <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-8">
-      {posts.map((post) => (
-        <BlogPostCard
-          post={post}
-          key={post._id}
-          onDeletePost={() => handleDeletePost(post._id)}
-        />
-      ))}
+    <div className="space-y-4">
+      <h1 className="text-3xl font-bold">Blog Posts</h1>
+      <Button className="flex w-fit gap-1.5" size="sm" asChild>
+        <Link to="/posts/create">
+          <PlusIcon className="h-5 w-5" /> Add Post
+        </Link>
+      </Button>
+
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-8">
+        {posts.map((post) => (
+          <BlogPostCard
+            post={post}
+            key={post._id}
+            onDeletePost={() => handleDeletePost(post._id)}
+          />
+        ))}
+      </div>
     </div>
   );
 }
