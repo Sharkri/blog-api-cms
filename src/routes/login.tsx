@@ -49,7 +49,7 @@ export default function Login() {
         sameSite: "Strict",
       });
 
-      window.location.replace("/");
+      window.location.replace("/blog-api-cms");
     } catch (error) {
       console.error(error);
       if (error instanceof AxiosError) {
