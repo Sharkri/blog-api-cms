@@ -17,6 +17,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useUser from "@/hooks/useUser";
 import Spinner from "@/components/ui/spinner";
+import { PasswordInput } from "@/components/ui/password-input";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email"),
@@ -37,6 +38,7 @@ export default function Login() {
   });
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
@@ -103,11 +105,12 @@ export default function Login() {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input
+                  <PasswordInput
+                    {...field}
                     autoComplete="current-password"
                     placeholder="Must be at least 6 characters"
-                    {...field}
-                    type="password"
+                    showing={showPassword}
+                    onToggleShow={() => setShowPassword(!showPassword)}
                   />
                 </FormControl>
                 <FormMessage />
