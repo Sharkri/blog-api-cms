@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css"; // import styles
 
@@ -34,28 +35,28 @@ const modules = {
   clipboard: { matchVisual: false },
 };
 
-const Editor = ({
-  placeholder,
-  onChange,
-  value,
-}: {
+type Props = {
   placeholder?: string;
   onChange: (html: string) => void;
   value: string;
-}) => {
-  return (
-    <div>
-      <ReactQuill
-        theme="snow"
-        onChange={onChange}
-        value={value}
-        modules={modules}
-        formats={formats}
-        bounds={".app"}
-        placeholder={placeholder}
-      />
-    </div>
-  );
 };
+
+const Editor = forwardRef<HTMLDivElement, Props>(
+  ({ placeholder, onChange, value }, ref) => {
+    return (
+      <div ref={ref}>
+        <ReactQuill
+          theme="snow"
+          onChange={onChange}
+          value={value}
+          modules={modules}
+          formats={formats}
+          bounds={".app"}
+          placeholder={placeholder}
+        />
+      </div>
+    );
+  }
+);
 
 export default Editor;
