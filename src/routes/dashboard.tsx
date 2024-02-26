@@ -2,6 +2,7 @@ import UserContext from "@/context/UserContext";
 import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import BlogPosts from "../components/blog/blog-posts";
+import Spinner from "@/components/ui/spinner";
 
 export default function Dashboard() {
   const { user, loading } = useContext(UserContext);
@@ -11,6 +12,12 @@ export default function Dashboard() {
     if (!user && !loading) navigate("/login");
   }, [user, loading, navigate]);
 
+  if (loading)
+    return (
+      <div className="p-8 text-lg gap-4 flex justify-center items-center">
+        Loading data... <Spinner />
+      </div>
+    );
   if (!user) return null;
 
   return (
