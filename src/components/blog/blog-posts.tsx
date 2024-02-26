@@ -17,9 +17,7 @@ export default function BlogPosts() {
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const res = await axios.get(`${VITE_API_URL}/api/posts`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.get(`${VITE_API_URL}/api/posts`);
       setPosts(res.data);
     };
     fetchPosts();
