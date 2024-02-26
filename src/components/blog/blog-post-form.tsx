@@ -31,7 +31,16 @@ const formSchema = z.object({
   isPublished: z.boolean().optional(),
   blogContents: z.string().min(1, "Blog contents cannot be empty"),
   description: z.string().min(1, "Description cannot be empty"),
-  image: z.any(),
+  image: z
+    .any()
+    .refine(
+      (img) => !img || img.size <= MAX_FILE_SIZE,
+      "Max image size is 5MB."
+    )
+    .refine(
+      (img) => !img || ACCEPTED_IMAGE_TYPES.includes(img.type),
+      "Only .jpg/jpeg, .png and .webp formats are supported."
+    ),
 });
 type PostData = z.infer<typeof formSchema>;
 
@@ -46,23 +55,20 @@ export default function BlogPostForm({
 }) {
   const form = useForm<PostData>({
     resolver: zodResolver(formSchema),
-    defaultValues: { title: "", blogContents: "", description: "", ...post },
+    defaultValues: {
+      title: "",
+      blogContents: "",
+      description: "",
+      ...post,
+      image: undefined,
+    },
   });
   const [loading, setLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | undefined>(
     post?.image ? getImageUrl(post.image) : undefined
   );
-  const [file, setFile] = useState<File | undefined>();
 
   const onSubmit = async (newPost: PostData) => {
-    if (file) {
-      let message = "";
-      if (file.size > MAX_FILE_SIZE) message = "Max image size is 5MB.";
-      if (!ACCEPTED_IMAGE_TYPES.includes(file.type))
-        message = "Only .jpg/jpeg, .png and .webp formats are supported.";
-      if (message) return form.setError("image", { message });
-    }
-
     setLoading(true);
 
     const formData = new FormData();
@@ -70,7 +76,7 @@ export default function BlogPostForm({
     formData.append("description", newPost.description);
     formData.append("blogContents", newPost.blogContents);
     formData.append("isPublished", (newPost.isPublished || false).toString());
-    if (file) formData.append("image", file);
+    if (newPost.image) formData.append("image", newPost.image);
     await onFormSubmit(formData);
 
     setLoading(false);
@@ -115,7 +121,7 @@ export default function BlogPostForm({
           <FormField
             control={form.control}
             name="image"
-            render={() => (
+            render={({ field }) => (
               <FormItem className="grid w-full max-w-xs items-center gap-1.5">
                 <FormLabel>Thumbnail</FormLabel>
                 {previewImage && (
@@ -138,7 +144,7 @@ export default function BlogPostForm({
                       const file = e.target.files?.[0];
                       if (file) {
                         reader.readAsDataURL(file);
-                        setFile(file);
+                        field.onChange(file);
                       }
                     }}
                   />
