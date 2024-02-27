@@ -6,8 +6,9 @@ import { Toaster } from "@/components/ui/sonner";
 import UserContext from "./context/UserContext";
 import useUser from "./hooks/useUser";
 import Login from "./routes/login";
-import BlogEdit from "./routes/blog-edit";
-import BlogCreate from "./routes/blog-create";
+import BlogEdit from "./routes/posts/blog-edit";
+import BlogCreate from "./routes/posts/blog-create";
+import Settings from "./routes/settings";
 
 const router = createBrowserRouter(
   [
@@ -22,6 +23,7 @@ const router = createBrowserRouter(
         { path: "/", element: <Dashboard /> },
         { path: "/sign-up", element: <SignUp /> },
         { path: "/login", element: <Login /> },
+        { path: "/settings", element: <Settings /> },
         { path: "/posts/create", element: <BlogCreate /> },
         { path: "/posts/:postId/edit", element: <BlogEdit /> },
       ],

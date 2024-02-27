@@ -3,7 +3,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import BlogPostForm from "../components/blog/blog-post-form";
+import BlogPostForm from "../../components/blog/blog-post-form";
 import UserContext from "@/context/UserContext";
 import { toast } from "sonner";
 

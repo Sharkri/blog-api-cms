@@ -24,15 +24,13 @@ const formSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
   displayName: z.string().nonempty("Display name is required"),
 });
+type FormSchema = z.infer<typeof formSchema>;
+type ErrorResponse = { msg: string; path: keyof FormSchema };
 
-type ErrorResponse = {
-  msg: string;
-  path: "email" | "password" | "displayName";
-};
 const { VITE_API_URL } = import.meta.env;
 
 export default function SignUp() {
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: { email: "", password: "", displayName: "" },
   });
@@ -40,7 +38,7 @@ export default function SignUp() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: FormSchema) {
     setLoading(true);
     try {
       const res = await axios.post(
@@ -60,9 +58,7 @@ export default function SignUp() {
       if (error instanceof AxiosError) {
         const errors = error.response?.data.errors as ErrorResponse[];
         if (errors)
-          errors.map((err) => {
-            form.setError(err.path, { message: err.msg });
-          });
+          errors.map((err) => form.setError(err.path, { message: err.msg }));
       }
     } finally {
       setLoading(false);

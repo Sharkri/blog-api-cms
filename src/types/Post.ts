@@ -1,3 +1,4 @@
+import { Image } from "./Image";
 import { User } from "./User";
 
 export type Comment = {
@@ -5,8 +6,6 @@ export type Comment = {
   text: string;
   replies: Comment[];
 };
-
-export type Image = { data: { data: Buffer }; contentType: string };
 
 export type Post = {
   author: User;

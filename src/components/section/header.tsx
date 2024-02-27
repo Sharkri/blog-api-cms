@@ -1,15 +1,10 @@
-import UserContext from "@/context/UserContext";
-import { useContext } from "react";
-import { Button } from "../ui/button";
-import Cookies from "js-cookie";
 import { Link } from "react-router-dom";
+import UserDropdown from "./user-dropdown";
+import { useContext } from "react";
+import UserContext from "@/context/UserContext";
 
 export default function Header() {
-  const { user, loading } = useContext(UserContext);
-  const handleLogout = () => {
-    Cookies.remove("token");
-    window.location.reload();
-  };
+  const { user } = useContext(UserContext);
 
   return (
     <header className="px-4 py-2 flex flex-wrap justify-between">
@@ -17,13 +12,7 @@ export default function Header() {
         <Link to="/">Blog API CMS</Link>
       </h1>
 
-      <div className="flex gap-4">
-        {!loading && user && (
-          <Button variant="ghost" onClick={handleLogout}>
-            Log out
-          </Button>
-        )}
-      </div>
+      <nav>{user && <UserDropdown user={user} />}</nav>
     </header>
   );
 }
