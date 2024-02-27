@@ -1,4 +1,4 @@
-import { Image } from "@/types/Post";
+import { Image } from "@/types/Image";
 
 const getImageUrl = (image: Image) => {
   const base64 = btoa(
