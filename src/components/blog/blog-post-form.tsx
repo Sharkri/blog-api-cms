@@ -161,7 +161,7 @@ export default function BlogPostForm({
               <FormItem className="max-w-4xl">
                 <FormLabel>Blog Content</FormLabel>
                 <FormControl>
-                  <Editor {...field} placeholder="Write your blog..." />
+                  <Editor {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
