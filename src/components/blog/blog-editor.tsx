@@ -1,62 +1,28 @@
 import { forwardRef } from "react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css"; // import styles
-
-const formats = [
-  "header",
-  "font",
-  "size",
-  "bold",
-  "italic",
-  "underline",
-  "strike",
-  "blockquote",
-  "list",
-  "bullet",
-  "indent",
-  "link",
-  "image",
-  "video",
-];
-const modules = {
-  toolbar: [
-    [{ header: "1" }, { header: "2" }, { font: [] }],
-    [{ size: [] }],
-    ["bold", "italic", "underline", "strike", "blockquote"],
-    [
-      { list: "ordered" },
-      { list: "bullet" },
-      { indent: "-1" },
-      { indent: "+1" },
-    ],
-    ["link", "image", "video"],
-    ["clean"],
-  ],
-  clipboard: { matchVisual: false },
-};
+import { Editor as TinyMCEEditor } from "@tinymce/tinymce-react";
 
 type Props = {
-  placeholder?: string;
   onChange: (html: string) => void;
   value: string;
 };
 
-const Editor = forwardRef<HTMLDivElement, Props>(
-  ({ placeholder, onChange, value }, ref) => {
-    return (
-      <div ref={ref}>
-        <ReactQuill
-          theme="snow"
-          onChange={onChange}
-          value={value}
-          modules={modules}
-          formats={formats}
-          bounds={".app"}
-          placeholder={placeholder}
-        />
-      </div>
-    );
-  }
-);
+const Editor = forwardRef<HTMLDivElement, Props>(({ onChange, value }, ref) => {
+  return (
+    <div ref={ref}>
+      <TinyMCEEditor
+        apiKey="lbbny201yfmx5l230jnqz3xe98l42841oju63ueb3bvsbdic"
+        init={{
+          plugins:
+            "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount",
+          toolbar:
+            "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat",
+          height: 696,
+        }}
+        onEditorChange={onChange}
+        value={value}
+      />
+    </div>
+  );
+});
 
 export default Editor;
