@@ -11,7 +11,6 @@ import { Button } from "../ui/button";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import BlogDeleteButton from "./blog-delete-button";
 import { Link } from "react-router-dom";
-import getImageUrl from "@/lib/blog/get-image-url";
 
 export default function BlogPostCard({
   post,
@@ -37,8 +36,6 @@ export default function BlogPostCard({
       </CardHeader>
 
       <CardContent className="flex flex-col gap-4">
-        <p className="text-gray-600">{post.description}</p>
-        {post.image && <img src={getImageUrl(post.image)} alt={post.title} />}
         <div className="flex gap-4 flex-wrap justify-center">
           <Button className="flex gap-1.5" size="sm" asChild>
             <Link to={`/posts/${post._id}/edit`}>

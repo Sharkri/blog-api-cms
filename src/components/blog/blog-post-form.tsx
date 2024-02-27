@@ -13,34 +13,14 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Checkbox } from "../ui/checkbox";
 import { useState } from "react";
-import getImageUrl from "@/lib/blog/get-image-url";
 import Editor from "./blog-editor";
 import Spinner from "../ui/spinner";
-
-const MAX_FILE_SIZE = 5_000_000;
-const ACCEPTED_IMAGE_TYPES = [
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/webp",
-];
 
 const formSchema = z.object({
   title: z.string().min(1, "Title cannot be empty"),
   topics: z.array(z.string()).optional(),
   isPublished: z.boolean().optional(),
   blogContents: z.string().min(1, "Blog contents cannot be empty"),
-  description: z.string().min(1, "Description cannot be empty"),
-  image: z
-    .any()
-    .refine(
-      (img) => !img || img.size <= MAX_FILE_SIZE,
-      "Max image size is 5MB."
-    )
-    .refine(
-      (img) => !img || ACCEPTED_IMAGE_TYPES.includes(img.type),
-      "Only .jpg/jpeg, .png and .webp formats are supported."
-    ),
 });
 type PostData = z.infer<typeof formSchema>;
 
@@ -58,25 +38,18 @@ export default function BlogPostForm({
     defaultValues: {
       title: "",
       blogContents: "",
-      description: "",
       ...post,
-      image: undefined,
     },
   });
   const [loading, setLoading] = useState(false);
-  const [previewImage, setPreviewImage] = useState<string | undefined>(
-    post?.image ? getImageUrl(post.image) : undefined
-  );
 
-  const onSubmit = async (newPost: PostData) => {
+  const onSubmit = async (values: PostData) => {
     setLoading(true);
 
     const formData = new FormData();
-    formData.append("title", newPost.title);
-    formData.append("description", newPost.description);
-    formData.append("blogContents", newPost.blogContents);
-    formData.append("isPublished", (newPost.isPublished || false).toString());
-    if (newPost.image) formData.append("image", newPost.image);
+    formData.append("title", values.title);
+    formData.append("blogContents", values.blogContents);
+    formData.append("isPublished", (!!values.isPublished).toString());
     await onFormSubmit(formData);
 
     setLoading(false);
@@ -101,59 +74,6 @@ export default function BlogPostForm({
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem className="max-w-xs">
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    type="text"
-                    placeholder="Describe your blog"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="image"
-            render={({ field }) => (
-              <FormItem className="grid w-full max-w-xs items-center gap-1.5">
-                <FormLabel>Thumbnail</FormLabel>
-                {previewImage && (
-                  <img
-                    src={previewImage}
-                    alt=""
-                    className="max-w-[240px] max-h-[240px] object-fit"
-                  />
-                )}
-                <FormControl>
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      const reader = new FileReader();
-                      reader.onloadend = () => {
-                        if (typeof reader.result === "string")
-                          setPreviewImage(reader.result);
-                      };
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        reader.readAsDataURL(file);
-                        field.onChange(file);
-                      }
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
           <FormField
             control={form.control}
             name="blogContents"
