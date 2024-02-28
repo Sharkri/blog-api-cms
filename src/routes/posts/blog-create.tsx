@@ -2,7 +2,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import BlogPostForm from "../../components/blog/blog-post-form";
+import BlogPostForm, { PostData } from "../../components/blog/blog-post-form";
 import UserContext from "@/context/UserContext";
 import { toast } from "sonner";
 
@@ -17,13 +17,10 @@ export default function BlogCreate() {
   }, [user, loading, navigate]);
   if (!user) return null;
 
-  const handleFormSubmit = async (formData: FormData) => {
+  const handleFormSubmit = async (formData: PostData) => {
     try {
       await axios.post(`${VITE_API_URL}/api/posts`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
       toast.success("Successfully created blog post!");
       navigate("/");

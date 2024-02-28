@@ -22,7 +22,7 @@ const formSchema = z.object({
   isPublished: z.boolean().optional(),
   blogContents: z.string().min(1, "Blog contents cannot be empty"),
 });
-type PostData = z.infer<typeof formSchema>;
+export type PostData = z.infer<typeof formSchema>;
 
 export default function BlogPostForm({
   formAction,
@@ -31,7 +31,7 @@ export default function BlogPostForm({
 }: {
   formAction: string;
   post?: PostData;
-  onFormSubmit: (formData: FormData) => Promise<void>;
+  onFormSubmit: (formData: PostData) => Promise<void>;
 }) {
   const form = useForm<PostData>({
     resolver: zodResolver(formSchema),
@@ -42,18 +42,44 @@ export default function BlogPostForm({
     },
   });
   const [loading, setLoading] = useState(false);
+  const [currentTopic, setCurrentTopic] = useState("");
 
   const onSubmit = async (values: PostData) => {
     setLoading(true);
-
-    const formData = new FormData();
-    formData.append("title", values.title);
-    formData.append("blogContents", values.blogContents);
-    formData.append("isPublished", (!!values.isPublished).toString());
-    await onFormSubmit(formData);
+    await onFormSubmit(values);
 
     setLoading(false);
   };
+
+  const addTopic = (topic: string) => {
+    const topics = form.getValues("topics") || [];
+    topic = topic.trim();
+    if (!topic) return;
+    const isDuplicate = topics.some(
+      (t) => t.toLowerCase() === topic.toLowerCase()
+    );
+    if (!isDuplicate) form.setValue("topics", [...topics, topic]);
+    setCurrentTopic("");
+  };
+  const removeTopic = (topicToRemove: string) => {
+    const topics = form.getValues("topics");
+    if (!topics) return;
+    form.setValue(
+      "topics",
+      topics.filter((topic) => topic !== topicToRemove)
+    );
+  };
+  function onTopicChange(value: string) {
+    const allowedChars = /^$|^[A-Za-z0-9 _-]+$/;
+
+    // if last text entered is double space or comma
+    if (value.slice(-2) === "  " || value.slice(-1) === ",") {
+      // remove the trailing comma before adding topic
+      addTopic(value.replace(",", ""));
+    } else if (allowedChars.test(value) && value.length <= 25) {
+      setCurrentTopic(value);
+    }
+  }
 
   return (
     <div className="p-8">
@@ -74,6 +100,46 @@ export default function BlogPostForm({
               </FormItem>
             )}
           />
+
+          <FormField
+            control={form.control}
+            name="topics"
+            render={({ field }) => (
+              <FormItem className="max-w-xs">
+                <FormLabel>Topics</FormLabel>
+
+                <div className="flex gap-5 flex-wrap">
+                  {field.value?.map((topic) => (
+                    <div
+                      className="pl-2 py-1 bg-zinc-50 flex items-center gap-2 rounded-md"
+                      key={topic}
+                    >
+                      <span className="text-[15px]">{topic}</span>
+                      <button
+                        type="button"
+                        className="text-lg text-black/50 pr-2 hover:text-black transition-colors duration-300"
+                        onClick={() => removeTopic(topic)}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                <FormControl>
+                  <Input
+                    {...field}
+                    type="text"
+                    placeholder="e.g.: topic 1, topic 2"
+                    value={currentTopic}
+                    onChange={(e) => onTopicChange(e.target.value)}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <FormField
             control={form.control}
             name="blogContents"
