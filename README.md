@@ -1,27 +1,7 @@
-# React + TypeScript + Vite
+# blog-api-cms
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![](https://github.com/Sharkri/blog-api-cms/assets/95330865/218e7de3-f176-45c2-b627-66ad93553f67)
+![](https://github.com/Sharkri/blog-api-cms/assets/95330865/300cebdd-0efe-44b4-8b1d-2c3c20a029ed)
+![](https://github.com/Sharkri/blog-api-cms/assets/95330865/ba2be697-bc16-4ea0-b40a-53c0bcc62063)
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+Here's the [Live link](https://sharkri.github.io/blog-api-cms), although only admins will be able to access the posts so...
