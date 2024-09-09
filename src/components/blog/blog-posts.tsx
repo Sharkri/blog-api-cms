@@ -56,7 +56,7 @@ export default function BlogPosts() {
         </Link>
       </Button>
 
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-8">
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-8">
         {posts.map((post) => (
           <BlogPostCard
             post={post}
